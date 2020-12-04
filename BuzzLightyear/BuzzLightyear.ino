@@ -5,6 +5,7 @@
 // ---------------------------------------------------------------
 
 #include "light.h"
+#include <SevSegShift.h>
 
 // SETTINGS
 // These variables are changable
@@ -14,67 +15,91 @@
 #define BUZ_PIN 5       // Buzzer pin
 #define THRESHOLD 40    // When considered "dark"
 #define WAIT_TIME 5     // In seconds (not milli)
-
-// all the pins for 7-segment
-// D1 to D4
-int pinArray[4] = { 8, 9, 10, 11 };
-// pin 14 shift register
-int data = 4;
-// pin 12 shift register
-int latch = 3;
-// pin 11 shift register
-int shift = 2;
+#define SHIFT_PIN_SHCP 2
+#define SHIFT_PIN_STCP 3
+#define SHIFT_PIN_DS   4
 // For later on
-int oldPot = 0, oldTime = millis();
+int oldPot = 0, oldPet = 0, oldTime = millis();
+int pot = 1, pet = 1;
+int outPot; // the output
+unsigned long nowTime = 0;
 
 // Potentiometer
 Potentiometer Pot(POT_PIN);
 // Buzzer tunes.
 BuzzLightyear ls1(BUZ_PIN, LIGHT_PIN, THRESHOLD);
-// For the 7-segmnet with 4 digits.
-// We need the information to light up the led
-Segment seg1(pinArray, data, latch, shift);
-
+// for the display
+SevSegShift sevseg(SHIFT_PIN_DS, SHIFT_PIN_SHCP, SHIFT_PIN_STCP, 1, true);
 
 void setup()
 {
   Serial.begin(9600);
-  // less than 4, could be euqal to 3 aswell
-  for (int i = 0; i < 4; i++)
-  {
-    // it had to be here.
-    pinMode(pinArray[i], OUTPUT);
-    digitalWrite(pinArray[i], HIGH);
-  }
 
-  // Pin the latch, shift and data
-  pinMode(latch, OUTPUT);
-  pinMode(shift, OUTPUT);
-  pinMode(data, OUTPUT);
+  byte numDigits = 4;
+  byte digitPins[] = {11, 10, 9, 8}; // These are the PINS of the ** Arduino **
+  byte segmentPins[] = {0, 1, 2, 3, 4, 5, 6, 7}; // these are the PINs of the ** Shift register **
+  bool resistorsOnSegments = false; // 'false' means resistors are on digit pins
+  byte hardwareConfig = COMMON_CATHODE; // See README.md for options
+  bool updateWithDelays = false; // Default 'false' is Recommended
+  bool leadingZeros = false; // Use 'true' if you'd like to keep the leading zeros
+  bool disableDecPoint = false; // Use 'true' if your decimal point doesn't exist or isn't connected
 
+  sevseg.begin(hardwareConfig, numDigits, digitPins, segmentPins, resistorsOnSegments, updateWithDelays, leadingZeros, disableDecPoint);
+  sevseg.setBrightness(100);
 }
 
 void loop()
 {
-  int nowTime;
+  int n, rev = 0, remainder;
+  int pot = Pot.readValue();
+  int pet = ls1.readValue();
+  ls1.pickSong(pot, 15);
+
   unsigned int number; // cant count zero or below anyway
   // globbal variable, callable outside the loop
-  int pot = Pot.readValue();
-
   // Read value from potentiometer and wait 15 seconds
   // for the tune to play again.
   // when this plays everything else stops. And thats fine
-  ls1.pickSong(pot, 15);
+
   // Lets take 3 second to read the last value
-  if ((pot != oldPot) && ((nowTime - oldTime) >= 3000))
+  if ((int)pot != (int)oldPot)
   {
-    // Dont want it just to vanish.
-    seg1.Display(pot);
+    if (millis() >= nowTime + 500)
+    {
+      outPot = pot;
+      nowTime += 500;
+    }
+    if ((int)pot == (int)oldPot)
+    {
+      nowTime += 1500;
+    }
+    // Comparison so that we can read it
+    oldPot = pot;
+  }
+  else if (pet != oldPet)
+  {
+    if (millis() >= nowTime + 500)
+    {
+      outPot = pet;
+      nowTime += 500;
+    }
     oldTime = millis();
+    oldPot = pet;
   }
-  else
+
+  sevseg.setNumber((int)reverse(outPot));
+  sevseg.refreshDisplay();
+}
+
+int reverse(int n)
+{
+  int rev = 0, remainder;
+  while (n != 0)
   {
-    // This will display the data on the 7-segment
-    seg1.Display(ls1.readValue());
+    remainder = n % 10;
+    rev = rev * 10 + remainder;
+    n /= 10;
   }
+
+  return rev;
 }

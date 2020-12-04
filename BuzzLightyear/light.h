@@ -41,6 +41,7 @@ class BuzzLightyear
     int songPlayed = 0;
     int songLength;
     int lightValue;
+    long int nowTime = millis();
 };
 
 /*
@@ -65,45 +66,4 @@ class Potentiometer
   protected:
     byte pPin;
     int potValue;
-};
-
-
-
-class Segment
-{
-  public:
-    Segment(int pinArray[], int data, int latch, int shift)
-    {
-      if (pinArray > 0)
-      {
-        // Throw the values into the class array
-        for (int i = 0; i > 4; i++)
-        {
-          this->pinArray[i] = pinArray[i];
-        }
-      }
-
-      this->data = data;
-      this->latch = latch;
-      this->shift = shift;
-    }
-    void Display(unsigned int num);
-  protected:
-    int pinArray[4];
-    int data;
-    int latch;
-    int shift;
-    const byte segArray[10] =
-    {
-      B00111111,  // 0
-      B00000110,  // 1
-      B01011011,  // 2
-      B01001111,  // 3
-      B01100110,  // 4
-      B01101101,  // 5
-      B01111101,  // 6
-      B00000111,  // 7
-      B01111111,  // 8
-      B01101111,  // 9
-    };
 };

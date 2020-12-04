@@ -11,12 +11,11 @@
 int BuzzLightyear::pickSong(int song, int wait)
 {
   // debug(song, lastSong);
-  long int nowTime = millis();
   readLight();
   // If turn on the potentiometer
   if ((lightValue > treshold) &&
       (songPlayed == 0) &&
-      ((nowTime - lastPlayed) >= (wait * 1000)))
+      (millis() > (nowTime + (wait * 1000))))
   {
     // This was not meant to be the main function but it takes up alot of
     // the work...
@@ -86,45 +85,4 @@ void BuzzLightyear::playSong(int melody[], int tempo[], int dur, int len)
     // stop the tone
     noTone(buzzer);
   }
-}
-
-
-/*
-    Segment functions goes right here aswell.
-*/
-
-void Segment::Display(unsigned int num)
-{
-/*
-  // Turn off all
-  for (int i = 0; i < 4; i++)
-  {
-    digitalWrite(pinArray[i], LOW);
-  }
-*/
-  // Could've looped it but wanted it to do it one by one.
-  digitalWrite(pinArray[0], LOW);
-  digitalWrite(latch, LOW);
-  shiftOut(data, shift, MSBFIRST, segArray[num / 10]);
-  digitalWrite(latch, HIGH);
-   digitalWrite(pinArray[0], HIGH);
-  delay(5);
-  
-  digitalWrite(pinArray[0], HIGH);
-  digitalWrite(latch, LOW);
-  shiftOut(data, shift, MSBFIRST, segArray[(num % 1000) / 100]);
-  digitalWrite(latch, HIGH);
-  delay(5);
-  
-  digitalWrite(pinArray[0], HIGH);
-  digitalWrite(latch, LOW);
-  shiftOut(data, shift, MSBFIRST, segArray[num % 100 / 10]);
-  digitalWrite(latch, HIGH);
-  delay(5);
-  
-  digitalWrite(pinArray[0], HIGH);
-  digitalWrite(latch, LOW);
-  shiftOut(data, shift, MSBFIRST, segArray[num % 10]);
-  digitalWrite(latch, HIGH);
-  delay(5);
 }
