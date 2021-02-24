@@ -6,7 +6,7 @@
  * #MinOut      Int         0	      Non-retain	True	True	True	False	  Scaling Min output
  * #MaxOut      Int         0	      Non-retain	True	True	True	False	  Scaling Max output
  * Output								
- * @Output      Int         0	      Non-retain	True	True	True	False	  Scaled input
+ * #Output      Int         0	      Non-retain	True	True	True	False	  Scaled input
  * InOut
  * Static								
  * #InReal	    Real        0.0	    Non-retain	True	True	True	False	  Input - Type: Real
