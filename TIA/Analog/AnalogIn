@@ -1,0 +1,83 @@
+/*
+ * Analog in
+ * Local variables:
+ * Input								
+ * @Input       Int         0	      Non-retain	True	True	True	False	  Analogue input
+ * @MinOut      Int         0	      Non-retain	True	True	True	False	  Scaling Min output
+ * @MaxOut      Int         0	      Non-retain	True	True	True	False	  Scaling Max output
+ * Output								
+ * @Output      Int         0	      Non-retain	True	True	True	False	  Scaled input
+ * InOut
+ * Static								
+ * @InReal	    Real        0.0	    Non-retain	True	True	True	False	  Input - Type: Real
+ * @ScaleIn	    Real        0.0	    Non-retain	True	True	True	False	  Span in - Type: Real
+ * @ScaleOut    Real	      0.0	    Non-retain	True	True	True	False	  Span Output - Type: Real
+ * @OutReal	    Real	      0.0	    Non-retain	True	True	True	False	  Scaled Output - Type: Real
+ * @MinOutReal	Real	      0.0	    Non-retain	True	True	True	False	  Min signal out - Type: Real
+ * Temp														
+ * Constant								
+ * @MaxIn       Real        27648.0						
+ * @MinIn       Real        0.0						
+ */
+
+REGION Convert Data Type
+    REGION Convert #InReal to Real
+        IF (TypeOf(#Input) = Int) THEN
+            // Convert #ScaleIn from INT to Real. 
+            #InReal := INT_TO_REAL(#Input);
+        ELSIF (TypeOf(#Input) = Real) THEN
+            // We good, no conversion needed.
+            #InReal := #Input;
+        END_IF;
+    END_REGION
+    
+    REGION Convert #ScaleIn to Real
+        // IN CASE OF IT BEING WRONG!! 
+        IF ((TypeOf(#MaxIn) = Int) AND (TypeOf(#MinIn) = Int)) THEN
+            // Convert #ScaleOut from INT to Real.
+            #ScaleIn := INT_TO_REAL((#MaxIn - #MinIn));
+        ELSIF (TypeOf(#MaxIn) = Real) AND (TypeOf(#MinIn) = Real) THEN
+            // We good, no conversion needed.
+            #ScaleIn := (#MaxIn - #MinIn);
+        END_IF;
+    END_REGION
+
+    REGION Convert #ScaleOut to Real
+        IF ((TypeOf(#MaxOut) = Int) AND (TypeOf(#MinOut) = Int)) THEN
+            // Convert #ScaleOut from INT to Real.
+            #ScaleOut := INT_TO_REAL((#MaxOut - #MinOut));
+        ELSIF (TypeOf(#MaxOut) = Real) AND (TypeOf(#MinOut) = Real) THEN
+            // We good, no conversion needed.
+            #ScaleOut := (#MaxOut - #MinOut);
+        END_IF;
+    END_REGION
+    
+    REGION Convert #MinOutReal to Real
+        IF (TypeOf(#MinOut) = Int) THEN
+            // Convert #ScaleOut from integer to Real.
+            #MinOutReal := INT_TO_REAL(#MinOut);
+        ELSIF (TypeOf(#MinOut) = Real) THEN
+            // We good, no conversion needed.
+            #MinOutReal := (#MinOut);
+        END_IF;
+    END_REGION
+END_REGION
+
+
+REGION Scaling
+    IF ((#InReal >= #MinIn) AND (#InReal <= #MaxIn)) THEN
+        // Calculate what we have done!
+        #OutReal := ((#InReal / #ScaleIn) * #ScaleOut + #MinOutReal);
+    END_IF;
+END_REGION
+
+
+REGION Output
+    IF (TypeOf(#OutReal) = Real) THEN
+        // Throw the outout with an integer.
+        #Output := REAL_TO_INT(#OutReal);
+    ELSIF (TypeOf(#OutReal) = Int) THEN
+        // we are an integer, no need to convert.
+        #Output := #OutReal;
+    END_IF;
+END_REGION
