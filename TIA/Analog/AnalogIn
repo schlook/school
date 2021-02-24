@@ -2,22 +2,22 @@
  * Analog in
  * Local variables:
  * Input								
- * @Input       Int         0	      Non-retain	True	True	True	False	  Analogue input
- * @MinOut      Int         0	      Non-retain	True	True	True	False	  Scaling Min output
- * @MaxOut      Int         0	      Non-retain	True	True	True	False	  Scaling Max output
+ * #Input       Int         0	      Non-retain	True	True	True	False	  Analogue input
+ * #MinOut      Int         0	      Non-retain	True	True	True	False	  Scaling Min output
+ * #MaxOut      Int         0	      Non-retain	True	True	True	False	  Scaling Max output
  * Output								
  * @Output      Int         0	      Non-retain	True	True	True	False	  Scaled input
  * InOut
  * Static								
- * @InReal	    Real        0.0	    Non-retain	True	True	True	False	  Input - Type: Real
- * @ScaleIn	    Real        0.0	    Non-retain	True	True	True	False	  Span in - Type: Real
- * @ScaleOut    Real	      0.0	    Non-retain	True	True	True	False	  Span Output - Type: Real
- * @OutReal	    Real	      0.0	    Non-retain	True	True	True	False	  Scaled Output - Type: Real
- * @MinOutReal	Real	      0.0	    Non-retain	True	True	True	False	  Min signal out - Type: Real
+ * #InReal	    Real        0.0	    Non-retain	True	True	True	False	  Input - Type: Real
+ * #ScaleIn	    Real        0.0	    Non-retain	True	True	True	False	  Span in - Type: Real
+ * #ScaleOut    Real	      0.0	    Non-retain	True	True	True	False	  Span Output - Type: Real
+ * #OutReal	    Real	      0.0	    Non-retain	True	True	True	False	  Scaled Output - Type: Real
+ * #MinOutReal	Real	      0.0	    Non-retain	True	True	True	False	  Min signal out - Type: Real
  * Temp														
  * Constant								
- * @MaxIn       Real        27648.0						
- * @MinIn       Real        0.0						
+ * #MaxIn       Real        27648.0						
+ * #MinIn       Real        0.0						
  */
 
 REGION Convert Data Type
